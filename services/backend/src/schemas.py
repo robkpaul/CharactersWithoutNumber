@@ -16,6 +16,7 @@ class Character(CharacterBase):
 
 class UserBase(BaseModel):
     email: str
+    username: str
 
 class UserCreate(UserBase):
     password: str
