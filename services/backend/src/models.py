@@ -21,4 +21,4 @@ class Character(Base):
     charsheet = Column(JSON, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    owner = relationship("User", back_populates="items")
+    owner = relationship("User", back_populates="characters")

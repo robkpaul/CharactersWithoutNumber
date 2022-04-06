@@ -1,5 +1,5 @@
 from datetime import datetime
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -32,3 +32,14 @@ app.add_middleware(
 def home():
     uptime = datetime.now()-initial_time
     return "Uptime: " + str(uptime)
+
+@app.get("/userlist/", response_model=list[schemas.Character])
+def list_users(limit: int=100, db: Session=Depends(get_db)):
+    return crud.get_users(db, limit)
+
+@app.post("/new_user/", response_model=schemas.User)
+def create_user(user: schemas.UserCreate, db: Session=Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.email)
+    if(db_user):
+        raise HTTPException(status_code=400, detail="Email already registered")
+    return crud.create_user(db=db, user=user)
