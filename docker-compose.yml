@@ -8,4 +8,4 @@ services:
     volumes:
       - ./services/backend:/app
     user: 1000:1000
-    command: uvicorn src.main:app --reload --host 0.0.0.0 --port 5000
+    command: python /app/config/manage.py runserver 0.0.0.0:5000
