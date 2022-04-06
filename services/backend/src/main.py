@@ -1,10 +1,24 @@
+from datetime import datetime
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware  # NEW
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
 
+from . import crud, models, schemas
+from .database import SessionLocal, engine
+
+models.Base.metadata.create_all(bind=engine)
+
+initial_time = datetime.now()
 
 app = FastAPI()
 
-# NEW
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:8080"],
@@ -16,4 +30,5 @@ app.add_middleware(
 
 @app.get("/")
 def home():
-    return "Hello, World!"
+    uptime = datetime.now()-initial_time
+    return "Uptime: " + str(uptime)
