@@ -1,11 +1,12 @@
 from enum import unique
 from django.db import models
-from django.contrib.auth.models import User as auth_user
+from django.contrib.auth.models import User
 
-class Profile(models.Model):
-    username = models.CharField(max_length=32, unique=True)
-    email = models.ForeignKey(
-        auth_user,
-        on_delete=models.Cascade
-    )
-    
+class Character():
+    name = models.CharField(max_length=127)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    campaign = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+class Campaign():
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    players = models.ManyToManyField(User)
