@@ -38,10 +38,18 @@ def sheet_default():
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-
     username = models.CharField(max_length=32, null=False)
 
 class Character(models.Model):
+    # Character Sheet Data
+    name = models.CharField(max_length=64, default='steve')
+    level = models.IntegerField(default=0)
+    xp = models.IntegerField(default=0)
+    max_hp = models.IntegerField()
+    curr_hp = models.IntegerField()
+    strain = models.IntegerField(default=0)
+    
+    # Metadata - External to Character Sheet
     sheet = models.JSONField(default=sheet_default())
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
     campaign = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, related_name="characters")
