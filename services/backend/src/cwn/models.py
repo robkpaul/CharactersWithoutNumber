@@ -36,16 +36,21 @@ def sheet_default():
     }
     return sheet
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-class Character():
+    username = models.CharField(max_length=32, null=False)
+
+class Character(models.Model):
     sheet = models.JSONField(default=sheet_default())
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    campaign = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="characters")
+    owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    campaign = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, related_name="characters")
 
     def getStat(self, stat):
         return self.sheet['stats'][stat]
 
 
 class Campaign(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owned_campaigns")
-    players = models.ManyToManyField(User)
+    title = models.CharField(max_length=127)
+    owner = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="owned_campaigns")
+    players = models.ManyToManyField(Profile)
