@@ -1,4 +1,3 @@
-from enum import unique
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -33,6 +32,7 @@ def sheet_default():
         'spells': [],
         'armor': [],
         'weapons': [],
+        'inventory': [],
     }
     return sheet
 
@@ -40,12 +40,12 @@ def sheet_default():
 class Character():
     sheet = models.JSONField(default=sheet_default())
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    campaign = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    campaign = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="characters")
 
     def getStat(self, stat):
         return self.sheet['stats'][stat]
 
 
-class Campaign():
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+class Campaign(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owned_campaigns")
     players = models.ManyToManyField(User)
