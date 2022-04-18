@@ -1,40 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-def sheet_default():
-    sheet = { # Fields that all sheets have, detailed breakdown of the character sheet can be found on Page 6-8 of the Worlds Without Number rulebook.
-        'name': '',
-        'level': 0,
-        'xp': 0,
-        'max_hp': '',
-        'curr_hp': '',
-        'strain': 0,
-        'ac': 0,
-        'stats': {
-                'str': 0,
-                'dex': 0,
-                'con': 0,
-                'int': 0,
-                'wis': 0,
-                'cha': 0
-        },
-        'saves': {
-            'physical': 0,
-            'evasion': 0,
-            'mental': 0,
-            'luck': 0,
-        },
-        'background': '',
-        'class': [], # list because can be just 1 field, or two fields for a Mage (Mage + Subclass), or up to 5 in the case of an Adventurer who chooses to double Mage
-        'skills': {},
-        'foci': [],
-        'spells': [],
-        'armor': [],
-        'weapons': [],
-        'inventory': [],
-    }
-    return sheet
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     username = models.CharField(max_length=32, null=False)
@@ -88,6 +54,8 @@ class Character(models.Model):
     background = models.ForeignKey('rules.Background', related_name='character_backgrounds')
     vocation = models.ForeignKey('rules.Vocation', related_name='character_vocations')
     foci = models.ManyToManyField('rules.Focus', related_name='character_foci')
+    spells = models.ManyToManyField('rules.Spell', related_name='character_spells')
+
 
     # Equipment and Inventory
     ## Currency
@@ -95,9 +63,10 @@ class Character(models.Model):
     silver = models.IntegerField()
 
     ## Equipment
-    
+    inventory = models.ManyToManyField('rules.Items', related_name='character_items')
+    armor = models.ManyToManyField('rules.Armor', related_name='character_armor')
+    weapons = models.ManyToManyField('rules.Weapon', related_name='character_weapons')
 
     # Metadata - External to Character Sheet, used by the API itself
-    sheet = models.JSONField(default=sheet_default())
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
     campaign = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, related_name="characters")
