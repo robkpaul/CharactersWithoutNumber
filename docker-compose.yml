@@ -2,10 +2,10 @@ version: '3'
 
 services:
   backend:
-    build: ./services/backend
+    build: .
     ports:
-      - 5000:5000
+      - 8000:8000
     volumes:
-      - ./services/backend:/app
+      - .:/app
     user: 1000:1000
     command: python /app/src/manage.py runserver 0.0.0.0:5000
