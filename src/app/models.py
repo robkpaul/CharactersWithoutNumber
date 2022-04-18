@@ -14,18 +14,19 @@ class Character(models.Model):
     # Character Sheet Data
     name = models.CharField(max_length=64, default='steve')
     level = models.IntegerField(default=0)
-    xp = models.IntegerField(default=0)
-    hp = models.IntegerField()
-    hp_max = models.IntegerField()
-    strain = models.IntegerField(default=0)
+    xp = models.IntegerField(default=0) # xp -- optional rule
+    hp = models.IntegerField() # current hit points
+    hp_max = models.IntegerField() # maximum hit points
+    ac = models.IntegerField # armor class
+    strain = models.IntegerField(default=0) # system strain -- optional rule
     
     # Attributes
-    atr_str = models.IntegerField()
-    atr_dex = models.IntegerField()
-    atr_con = models.IntegerField()
-    atr_int = models.IntegerField()
-    atr_wis = models.IntegerField()
-    atr_cha = models.IntegerField()
+    atr_str = models.IntegerField() # strength
+    atr_dex = models.IntegerField() # dexterity
+    atr_con = models.IntegerField() # constitution
+    atr_int = models.IntegerField() # intelligence
+    atr_wis = models.IntegerField() # wisdom
+    atr_cha = models.IntegerField() # charisma
 
     # Skills
     skl_admn = models.IntegerField() # administer
@@ -63,10 +64,28 @@ class Character(models.Model):
     silver = models.IntegerField()
 
     ## Equipment
-    inventory = models.ManyToManyField('rules.Items', related_name='character_items')
+    inventory = models.ManyToManyField('rules.Item', related_name='character_items')
     armor = models.ManyToManyField('rules.Armor', related_name='character_armor')
     weapons = models.ManyToManyField('rules.Weapon', related_name='character_weapons')
 
     # Metadata - External to Character Sheet, used by the API itself
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
     campaign = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, related_name="characters")
+
+    @property
+    def full(self):
+        "Returns the full character sheet, with all info"
+        return ''
+
+    @property
+    def brief(self):
+        "Returns the partial character sheet, with only the info needed for the DM Screen"
+        sheet = {}
+        sheet['name'] = self.name
+        sheet['hp'] = self.hp
+        sheet['hp_max'] = self.hp_max
+        sheet['ac'] = self.ac
+        sheet['level'] = self.level
+        sheet['class'] = self.vocation
+        return sheet
+
