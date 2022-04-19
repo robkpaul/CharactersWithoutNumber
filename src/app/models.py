@@ -1,6 +1,31 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
+# Rule Models
+class Background(models.Model):
+    name = models.CharField()
+
+class Vocation(models.Model):
+    name = models.CharField()
+
+class Focus(models.Model):
+    name = models.CharField()
+
+class Spell(models.Model):
+    name = models.CharField()
+
+class Item(models.Model):
+    name = models.CharField()
+
+class Armor(Item):
+    ac = models.IntegerField()
+
+class Weapon(Item):
+    atk = models.IntegerField()
+
+
+# Models for the App
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     username = models.CharField(max_length=32, null=False)
@@ -9,6 +34,8 @@ class Campaign(models.Model):
     title = models.CharField(max_length=127)
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="owned_campaigns")
     players = models.ManyToManyField(Profile)
+
+#Character Sheet Model
 
 class Character(models.Model):
     # Character Sheet Data
@@ -51,11 +78,11 @@ class Character(models.Model):
     skl_trde = models.IntegerField() # trade
     skl_work = models.IntegerField() # work
 
-    # Other properties, handled by rules
-    background = models.ForeignKey('rules.Background', related_name='character_backgrounds')
-    vocation = models.ForeignKey('rules.Vocation', related_name='character_vocations')
-    foci = models.ManyToManyField('rules.Focus', related_name='character_foci')
-    spells = models.ManyToManyField('rules.Spell', related_name='character_spells')
+    # Character Attributes that are handled by other Models
+    background = models.ForeignKey(Background, related_name='character_backgrounds')
+    vocation = models.ForeignKey(Vocation, related_name='character_vocations')
+    foci = models.ManyToManyField(Focus, related_name='character_foci')
+    spells = models.ManyToManyField(Spell, related_name='character_spells')
 
 
     # Equipment and Inventory
@@ -64,13 +91,13 @@ class Character(models.Model):
     silver = models.IntegerField()
 
     ## Equipment
-    inventory = models.ManyToManyField('rules.Item', related_name='character_items')
-    armor = models.ManyToManyField('rules.Armor', related_name='character_armor')
-    weapons = models.ManyToManyField('rules.Weapon', related_name='character_weapons')
+    inventory = models.ManyToManyField(Item, related_name='character_items')
+    armor = models.ManyToManyField(Armor, related_name='character_armor')
+    weapons = models.ManyToManyField(Weapon, related_name='character_weapons')
 
     # Metadata - External to Character Sheet, used by the API itself
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    campaign = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, related_name="characters")
+    campaign = models.ForeignKey(Campaign, on_delete=models.SET_NULL, null=True, related_name="characters")
 
     @property
     def full(self):
@@ -88,4 +115,3 @@ class Character(models.Model):
         sheet['level'] = self.level
         sheet['class'] = self.vocation
         return sheet
-
