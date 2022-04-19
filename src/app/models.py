@@ -2,7 +2,12 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+# Custom Dice Field
+class DiceField(models.Field):
+    description = "A d3, d4, d6, d8, d10, d12, d20, or d100"
+
 # Rule Models
+
 class Background(models.Model):
     name = models.CharField()
 
@@ -19,10 +24,13 @@ class Spell(models.Model):
 class Item(models.Model):
     name = models.CharField()
 
-class Armor(Item):
+class Equipable(Item):
+    equipped = models.BooleanField()
+
+class Armor(Equipable):
     ac = models.IntegerField()
 
-class Weapon(Item):
+class Weapon(Equipable):
     atk = models.IntegerField()
 
 
@@ -36,11 +44,7 @@ class Campaign(models.Model):
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="owned_campaigns")
     players = models.ManyToManyField(Profile)
 
-#Character Sheet Model
-
-class InventoryItem(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    qty = models.IntegerField()
+#Character Sheet Models
 
 class Character(models.Model):
     # Character Sheet Data
@@ -95,9 +99,6 @@ class Character(models.Model):
     gold = models.IntegerField()
     silver = models.IntegerField()
 
-    ## Equipment
-    inv = models.ManyToOneField(InventoryItem)
-
     # Metadata - External to Character Sheet, used by the app itself
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
     campaign = models.ForeignKey(Campaign, on_delete=models.SET_NULL, null=True, related_name="characters")
@@ -118,3 +119,10 @@ class Character(models.Model):
         sheet['level'] = self.level
         sheet['class'] = self.vocation
         return sheet
+
+
+class InventoryItem(models.Model):
+    """Handles the inventory of a character"""
+    owner = models.ForeignKey(Character, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    qty = models.IntegerField()
