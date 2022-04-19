@@ -14,6 +14,7 @@ class Focus(models.Model):
 
 class Spell(models.Model):
     name = models.CharField()
+    level = models.IntegerField()
 
 class Item(models.Model):
     name = models.CharField()
@@ -36,6 +37,10 @@ class Campaign(models.Model):
     players = models.ManyToManyField(Profile)
 
 #Character Sheet Model
+
+class InventoryItem(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    qty = models.IntegerField()
 
 class Character(models.Model):
     # Character Sheet Data
@@ -91,11 +96,9 @@ class Character(models.Model):
     silver = models.IntegerField()
 
     ## Equipment
-    inventory = models.ManyToManyField(Item, related_name='character_items')
-    armor = models.ManyToManyField(Armor, related_name='character_armor')
-    weapons = models.ManyToManyField(Weapon, related_name='character_weapons')
+    inv = models.ManyToOneField(InventoryItem)
 
-    # Metadata - External to Character Sheet, used by the API itself
+    # Metadata - External to Character Sheet, used by the app itself
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
     campaign = models.ForeignKey(Campaign, on_delete=models.SET_NULL, null=True, related_name="characters")
 
