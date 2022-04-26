@@ -4,17 +4,16 @@ from app.models import Character
 
 
 def index(request):
-    response = 'Online'
-    return HttpResponse(response)
+    return render(request, 'dicelog.html')
 
-def character(request, id=0):
-    response = {}
-    sheet = Character.objects.get(pk=id)
-    response['sheet'] = sheet.full()
-    return JsonResponse(response)
+# def character(request, id=0):
+#     response = {}
+#     sheet = Character.objects.get(pk=id)
+#     response['sheet'] = sheet.full()
+#     return JsonResponse(response)
 
-def characterBrief(request, id=0):
-    response = {}
-    sheet = Character.objects.get(pk=id)
-    response['sheet'] = sheet.brief()
-    return JsonResponse(response)
+# def characterBrief(request, id=0):
+#     response = {}
+#     sheet = Character.objects.get(pk=id)
+#     response['sheet'] = sheet.brief()
+#     return JsonResponse(response)

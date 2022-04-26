@@ -9,20 +9,20 @@ class DiceField(models.Field):
 # Rule Models
 
 class Background(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=128)
 
 class Vocation(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=128)
 
 class Focus(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=128)
 
 class Spell(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=128)
     level = models.IntegerField()
 
 class Item(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=128)
 
 class Equipable(Item):
     equipped = models.BooleanField()
@@ -88,8 +88,8 @@ class Character(models.Model):
     skl_work = models.IntegerField() # work
 
     # Character Attributes that are handled by other Models
-    background = models.ForeignKey(Background, related_name='character_backgrounds')
-    vocation = models.ForeignKey(Vocation, related_name='character_vocations')
+    background = models.ForeignKey(Background, related_name='character_backgrounds', null=True, on_delete=models.SET_NULL)
+    vocation = models.ForeignKey(Vocation, related_name='character_vocations', null=True, on_delete=models.SET_NULL)
     foci = models.ManyToManyField(Focus, related_name='character_foci')
     spells = models.ManyToManyField(Spell, related_name='character_spells')
 
