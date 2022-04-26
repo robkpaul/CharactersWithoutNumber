@@ -6,7 +6,10 @@ class ChatConsumer(WebsocketConsumer):
         self.accept()
         self.send(text_data=json.dumps({'type': 'connection_established'}))
     
-    def receive(self):
-        self.send(text_data=json.dumps({'type': 'message_received'}))
+    def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json['message']
+        print(message)
+
     def disconnect(self):
         self.send(text_data=json.dumps({'type': 'user_disconnect'}))
