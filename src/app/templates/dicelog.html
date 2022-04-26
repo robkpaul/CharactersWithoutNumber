@@ -7,6 +7,16 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Test</h1>
+    <h1> Dice Log </h1>
+    <script type="text/javascript">
+        let url = 'ws://localhost:8000/ws/socket-server'
+
+        const chatSocket = new WebSocket(url)
+
+        chatSocket.onmessage = function(event){
+            let data = JSON.parse(event.data)
+            console.log('Data:', data)
+        }
+    </script>
 </body>
 </html>

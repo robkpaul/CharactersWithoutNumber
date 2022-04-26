@@ -4,6 +4,9 @@ from app.models import Character
 
 
 def index(request):
+    return render(request, 'index.html')
+
+def dicelog(request):
     return render(request, 'dicelog.html')
 
 # def character(request, id=0):
