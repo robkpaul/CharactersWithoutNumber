@@ -3,9 +3,18 @@ version: '3'
 services:
   backend:
     build: .
+    volumes:
+      - .:/code
+    links:
+      - redis:redis
+    depends_on:
+      - redis
     ports:
       - 8000:8000
-    volumes:
-      - .:/app
     user: 1000:1000
-    command: python /app/src/manage.py runserver 0.0.0.0:8000
+    command: python /code/src/manage.py runserver 0.0.0.0:8000
+
+  redis:
+    image: redis:latest
+    expose:
+      - 6379
