@@ -1,4 +1,6 @@
-let url = 'ws://localhost:8000/ws/socket-server'
+room = 1
+
+let url = 'ws://' + window.location.host + '/ws/rolls/' + room
 
 const chatSocket = new WebSocket(url)
 
