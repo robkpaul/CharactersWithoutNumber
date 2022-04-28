@@ -1,12 +1,18 @@
 room = 1
-
-let url = 'ws://' + window.location.host + '/ws/rolls/' + room
-
-const chatSocket = new WebSocket(url)
+const chatSocket = new WebSocket(
+    'ws://'
+    + window.location.host
+    + '/ws/rolls/'
+    + room
+ )
 
 chatSocket.onmessage = function(event){
     let data = JSON.parse(event.data)
     console.log('Data:', data)
+}
+
+chatSocket.onclose = function(event){
+    console.error('Chat socket closed unexpectedly')
 }
 
 let form = document.getElementById('websocket-form')
