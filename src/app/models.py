@@ -105,12 +105,12 @@ class Character(models.Model):
 
     @property
     def full(self):
-        "Returns the full character sheet, with all info"
+        """Returns the full character sheet, with all info"""
         return ''
 
     @property
     def brief(self):
-        "Returns the partial character sheet, with only the info needed for the DM Screen"
+        """Returns the partial character sheet, with only the info needed for the DM Screen"""
         sheet = {}
         sheet['name'] = self.name
         sheet['hp'] = self.hp
