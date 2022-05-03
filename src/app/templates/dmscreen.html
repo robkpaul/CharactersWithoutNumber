@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+{{title}}
+{% endblock %}
+
+{% block content %}
+<div class="grid-container full">
+    <div class="grid-x grid-padding-x">
+        <div class="grid-y grid-padding-y large-6 medium-12 small-12 cell">
+            {% for c in chars %}
+            <div class="cell">
+                <h3>{{c.name}}</h3> 
+                <h4>{{c.class}} {{c.level}}</h4>
+                <div>HP: {{c.hp_max}} | AC: {{c.ac}} | Notice: {{c.notice}} </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
