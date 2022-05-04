@@ -96,8 +96,7 @@ class Character(models.Model):
 
     # Equipment and Inventory
     ## Currency
-    gold = models.IntegerField()
-    silver = models.IntegerField()
+    coin = models.IntegerField()  # measured in copper
 
     # Metadata - External to Character Sheet, used by the app itself
     owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
@@ -106,7 +105,45 @@ class Character(models.Model):
     @property
     def full(self):
         """Returns the full character sheet, with all info"""
-        return ''
+        sheet = {
+            'name': self.name,
+            'hp': self.hp,
+            'hp_max': self.hp_max,
+            'ac': self.ac,
+            'strain': self.strain,
+            'attributes': {
+                'str': self.atr_str,
+                'dex': self.atr_dex,
+                'con': self.atr_con,
+                'int': self.atr_int,
+                'wis': self.atr_wis,
+                'cha': self.atr_cha
+            },
+            'skills': {
+                'administer': self.skl_admn,
+                'connect': self.skl_conn,
+                'convince': self.skl_conv,
+                'craft': self.skl_crft,
+                'exert': self.skl_exrt,
+                'heal': self.skl_heal,
+                'know': self.skl_know,
+                'lead': self.skl_know,
+                'magic': self.skl_magc,
+                'notice': self.skl_noti,
+                'perform': self.skl_perf,
+                'pray': self.skl_pray,
+                'punch': self.skl_pnch,
+                'ride': self.skl_ride,
+                'sail': self.skl_sail,
+                'shoot': self.skl_shot,
+                'sneak': self.skl_snek,
+                'stab': self.skl_stab,
+                'survive': self.skl_srvv,
+                'trade': self.skl_trde,
+                'work': self.skl_work
+            }
+        }
+        return sheet
 
     @property
     def brief(self):
@@ -116,6 +153,7 @@ class Character(models.Model):
         sheet['hp'] = self.hp
         sheet['hp_max'] = self.hp_max
         sheet['ac'] = self.ac
+        sheet['notice'] = self.skl_noti
         sheet['level'] = self.level
         sheet['class'] = self.vocation
         return sheet
