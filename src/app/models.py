@@ -1,13 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
-# Custom Dice Field
-class DiceField(models.Field):
-    description = "A d3, d4, d6, d8, d10, d12, d20, or d100"
-
 # Rule Models
-
 class Background(models.Model):
     name = models.CharField(max_length=128)
 
@@ -36,19 +30,32 @@ class Weapon(Equipable):
 
 # Models for the App
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    username = models.CharField(max_length=32, null=False)
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE
+    )
+    username = models.CharField(
+        max_length=32, 
+        null=False
+    )
 
 class Campaign(models.Model):
     title = models.CharField(max_length=127)
-    owner = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="owned_campaigns")
+    owner = models.ForeignKey(
+        Profile, 
+        on_delete=models.CASCADE, 
+        related_name="owned_campaigns"
+    )
     players = models.ManyToManyField(Profile)
 
 #Character Sheet Models
 
 class Character(models.Model):
     # Character Sheet Data
-    name = models.CharField(max_length=64, default='steve')
+    name = models.CharField(
+        max_length=64, 
+        default='Thorin Thabiticus'
+    )
     level = models.IntegerField(default=0)
     xp = models.IntegerField(default=0) # xp -- optional rule
     hp = models.IntegerField() # current hit points
@@ -88,21 +95,59 @@ class Character(models.Model):
     skl_work = models.IntegerField() # work
 
     # Character Attributes that are handled by other Models
-    background = models.ForeignKey(Background, related_name='character_backgrounds', null=True, on_delete=models.SET_NULL)
-    vocation = models.ForeignKey(Vocation, related_name='character_vocations', null=True, on_delete=models.SET_NULL)
-    foci = models.ManyToManyField(Focus, related_name='character_foci')
-    spells = models.ManyToManyField(Spell, related_name='character_spells')
+    background = models.ForeignKey(
+        Background, 
+        related_name='character_backgrounds', 
+        null=True, 
+        on_delete=models.SET_NULL
+    )
+    vocation = models.ForeignKey(
+        Vocation, 
+        related_name='character_vocations', 
+        null=True, 
+        on_delete=models.SET_NULL
+    )
+    foci = models.ManyToManyField(
+        Focus, 
+        related_name='character_foci'
+    )
+    spells = models.ManyToManyField(
+        Spell, 
+        related_name='character_spells'
+    )
 
 
     # Equipment and Inventory
     ## Currency
     coin = models.IntegerField()  # measured in copper
 
-    # Metadata - External to Character Sheet, used by the app itself
-    owner = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    campaign = models.ForeignKey(Campaign, on_delete=models.SET_NULL, null=True, related_name="characters")
+    ## Inventory
+    items = models.ManyToManyField(
+        Item,
+        related_name='character_items'
+    )
+    armor = models.ManyToManyField(
+        Armor,
+        related_name='character_armor'
+    )
+    weapons = models.ManyToManyField(
+        Weapon,
+        related_name='character_weapons'
+    )
 
-    @property
+    # Metadata - External to Character Sheet, used by the app itself
+    owner = models.ForeignKey(
+        Profile, 
+        on_delete=models.CASCADE
+    )
+    campaign = models.ForeignKey(
+        Campaign, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        related_name='characters'
+    )
+
+    # Methods
     def full(self):
         """Returns the full character sheet, with all info"""
         sheet = {
@@ -145,7 +190,6 @@ class Character(models.Model):
         }
         return sheet
 
-    @property
     def brief(self):
         """Returns the partial character sheet, with only the info needed for the DM Screen"""
         sheet = {}
