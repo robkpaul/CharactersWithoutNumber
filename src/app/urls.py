@@ -4,5 +4,6 @@ from . import views
 urlpatterns = [
     path('', views.index),
     path('dicelog', views.dicelog),
-    path('campaigns/<int:number>', views.campaign)
+    path('campaign/<int:campaign_id>', views.campaign),
+    path('character/<int:character_id>', views.character)
 ]
