@@ -240,10 +240,3 @@ class Character(models.Model):
         sheet['level'] = self.level
         sheet['class'] = self.vocation
         return sheet
-
-
-class InventoryItem(models.Model):
-    """Handles the inventory of a character"""
-    owner = models.ForeignKey(Character, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    qty = models.IntegerField()
