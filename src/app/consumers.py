@@ -25,11 +25,16 @@ class ChatConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         if(text_data_json['message'] != ''):
             message = str(text_data_json['message']).split()
-            dice_pattern = re.compile("^d(4|8|10|12|20|100)$") # accepts dice rolls that are 4, 8, 10, 12, 20, and 100
-            result = re.match(dice_pattern, message[0])
+            dice_pattern = re.compile("^[1-9]*d(4|6|8|10|12|20|100)$") # accepts dice rolls that are 4, 6, 8, 10, 12, 20, and 100
+            result = re.match(dice_pattern, message)
             if result: 
-                die_num = int(message[0][1:])
-                response = random.randint(1, die_num)
+                splits = message.split('d')
+                response = 0
+                for i in range(int(splits[0])):
+                    response += random.randint(1, splits[1])
+                self.send({
+                    'roll': response
+                })
                 async_to_sync(self.channel_layer.group_send)(
                     self.room_group_name,
                     {
@@ -41,11 +46,13 @@ class ChatConsumer(WebsocketConsumer):
 
     def chat_message(self, event):
         message = event['message']
-        dice_pattern = re.compile("^d(4|8|10|12|20|100)$") # accepts dice rolls that are 4, 8, 10, 12, 20, and 100
-        result = re.match(dice_pattern, message[0])
+        dice_pattern = re.compile("^[1-9]*d(4|6|8|10|12|20|100)$") # accepts dice rolls that are 4, 6, 8, 10, 12, 20, and 100
+        result = re.match(dice_pattern, message)
         if result: 
-            die_num = int(message[0][1:])
-            response = random.randint(1, die_num)
-            self.send({
+            splits = message.split('d')
+            response = 0
+            for i in range(int(splits[0])):
+                response += random.randint(1, splits[1])
+            self.send(text_data=json.dumps({
                 'roll': response
-            })
+            }))
