@@ -21,11 +21,14 @@ class Item(models.Model):
 class Equipable(Item):
     equipped = models.BooleanField()
 
+    class Meta:
+        abstract = True
+
 class Armor(Equipable):
     ac = models.IntegerField()
 
 class Weapon(Equipable):
-    atk = models.IntegerField()
+    atk = models.PositiveIntegerField()
 
 
 # Models for the App
@@ -58,8 +61,8 @@ class Character(models.Model):
     )
     level = models.IntegerField(default=0)
     xp = models.IntegerField(default=0) # xp -- optional rule
-    hp = models.IntegerField() # current hit points
-    hp_max = models.IntegerField() # maximum hit points
+    hp = models.PositiveIntegerField() # current hit points
+    hp_max = models.PositiveIntegerField() # maximum hit points
     ac = models.IntegerField # armor class
     strain = models.IntegerField(default=0) # system strain -- optional rule
     
@@ -119,7 +122,7 @@ class Character(models.Model):
 
     # Equipment and Inventory
     ## Currency
-    coin = models.IntegerField()  # measured in copper
+    wealth = models.PositiveIntegerField()  # measured in copper
 
     ## Inventory
     items = models.ManyToManyField(
@@ -152,6 +155,7 @@ class Character(models.Model):
         """Returns the full character sheet, with all info"""
         sheet = {
             'name': self.name,
+            'level': self.level,
             'hp': self.hp,
             'hp_max': self.hp_max,
             'ac': self.ac,
@@ -186,8 +190,43 @@ class Character(models.Model):
                 'survive': self.skl_srvv,
                 'trade': self.skl_trde,
                 'work': self.skl_work
-            }
+            },
+            'background': self.background.name,
+            'vocation': self.vocation.name,
+            'foci': [],
+            'spells': [],
+            'wealth':  self.wealth,
+            'inventory': [],
         }
+        # Many to Many fields are handled through loops
+        for f in self.foci.all():
+            sheet['foci'].append(f.name)
+
+        for s in self.spells.all():
+            sheet['spells'].append({
+                'name': s.name,
+                'level': s.level
+            })
+        for i in self.items.all():
+            sheet['inventory'].append({
+                'type': 0,
+                'name': i.name
+            })
+        for i in self.armor.all():
+            sheet['inventory'].append({
+                'type': 'armor',
+                'name': i.name,
+                'equipped': i.equipped,
+                'ac': i.ac
+            })
+        for i in self.weapons.all():
+            sheet['inventory'].append({
+                'type': 'armor',
+                'name': i.name,
+                'equipped': i.equipped,
+                'attack': i.atk
+            })
+
         return sheet
 
     def brief(self):
