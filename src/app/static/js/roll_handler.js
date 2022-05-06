@@ -1,4 +1,6 @@
-room = 1
+
+var script_tag = document.getElementById('roll_script');
+var room = script_tag.getAttribute("data-room");
 const chatSocket = new WebSocket(
     'ws://'
     + window.location.host
