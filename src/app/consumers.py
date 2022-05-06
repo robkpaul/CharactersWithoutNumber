@@ -43,7 +43,7 @@ class ChatConsumer(WebsocketConsumer):
                         'roll': response
                     }
                 )
-        print(message + ': ' + str(response))
+        print('"' + message + '": ' + str(response))
 
     def chat_message(self, event):
         response = event['roll']
