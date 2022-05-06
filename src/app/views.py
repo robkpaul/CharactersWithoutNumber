@@ -10,14 +10,22 @@ def dicelog(request):
 
 def campaign(request, **kwargs):
     cid = kwargs['campaign_id']
-    campaign = Campaign.objects.get(pk=cid)
+    campaign = 1 #Campaign.objects.get(pk=cid)
     context = {
         'campaign_id': cid,
         'chars': [], # handled in for loop
-        'campaign': campaign.name
+        'campaign': 'test'#campaign.name
     }
-    for c in campaign.characters.all():
-        context['chars'].append(c.brief())
+    context['chars'].append({
+                'name': 'Thorin Thabiticus',
+                'hp_max': 10,
+                'ac': 20,
+                'level': 1,
+                'class': 'Warrior',
+                'notice': 10
+    })
+    # for c in campaign.characters.all():
+    #     context['chars'].append(c.brief())
 
     return render(request, 'campaign.html', context=context )
 
