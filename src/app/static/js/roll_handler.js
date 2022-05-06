@@ -1,6 +1,7 @@
 
 var script_tag = document.getElementById('roll_script')
 var room = script_tag.getAttribute("data-room")
+var user = script_tag.getAttribute("data-user")
 const chatSocket = new WebSocket(
     'ws://'
     + window.location.host
@@ -12,7 +13,7 @@ const log = document.getElementById('dicelog')
 chatSocket.onmessage = function(event){
     let data = JSON.parse(event.data)
     console.log('Data:', data)
-    log.innerHTML += `<div class="cell">` + data.roll + `</div>` // outputs the roll to the log element
+    log.innerHTML += `<div class="cell">` + data.user + ': ' + data.roll + `</div>` // outputs the roll to the log element
     log.scrollTop = log.scrollHeight // scrolls to the bottom of the log automatically
 }
 
@@ -25,7 +26,8 @@ form.addEventListener('submit', (event)=> {
     event.preventDefault()
     let message = event.target.message.value
     chatSocket.send(JSON.stringify({
-        'message': message
+        'message': message,
+        'user': user
     }))
     form.reset()
 })

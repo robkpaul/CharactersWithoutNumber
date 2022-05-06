@@ -24,10 +24,10 @@ class ChatConsumer(WebsocketConsumer):
     def receive(self, text_data):
         response = 'invalid command'
         text_data_json = json.loads(text_data)
-        if(text_data_json['message'] != None):
+        if(text_data_json['message'] != ""):
             message = str(text_data_json['message']).split()
             message = message[0]
-            dice_pattern = re.compile("^([1-9][0-9]*)*d(4|6|8|10|12|20|100)$") # accepts dice rolls that are 4, 6, 8, 10, 12, 20, and 100
+            dice_pattern = re.compile("^\d?\d?d(4|6|8|10|12|20|100)$") # accepts dice rolls that are 4, 6, 8, 10, 12, 20, and 100
             result = re.match(dice_pattern, str(message))
             if result: 
                 splits = message.split('d')
@@ -40,13 +40,15 @@ class ChatConsumer(WebsocketConsumer):
                     self.room_group_name,
                     {
                         'type': 'chat_message', 
-                        'roll': response
+                        'roll': response,
+                        'user': text_data_json['user']
                     }
                 )
-        print('"' + message + '": ' + str(response))
+            print('"' + message + '": ' + str(response))
 
     def chat_message(self, event):
-        response = event['roll']
+        print(event)
         self.send(text_data=json.dumps({
-            'roll': response
+            'roll': event['roll'],
+            'user':  event['user']
         }))

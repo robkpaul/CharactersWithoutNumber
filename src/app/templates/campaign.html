@@ -17,7 +17,7 @@
             </div>
             {% endfor %}
         </div>
-        <div class="grid-y medium-grid-frame grid-padding-y  ">
+        <div class="cell grid-y medium-grid-frame grid-padding-y">
             <div class="cell">
                 <h4>Add Player</h4>   
             </div>
@@ -33,5 +33,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script id="roll_script" src="{% static 'js/roll_handler.js' %}" data-room="{{campaign_id}}"></script>
+<script id="roll_script" src="{% static 'js/roll_handler.js' %}" data-room="{{campaign_id}}" data-user="{{username}}"></script>
 {% endblock %}

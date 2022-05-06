@@ -10,11 +10,12 @@ def dicelog(request):
 
 def campaign(request, **kwargs):
     cid = kwargs['campaign_id']
-    campaign = 1 #Campaign.objects.get(pk=cid)
+    #campaign = Campaign.objects.get(pk=cid)
     context = {
         'campaign_id': cid,
         'chars': [], # handled in for loop
-        'campaign': 'test'#campaign.name
+        'campaign': 'test',#campaign.name
+        'username': 'rokepa'
     }
     context['chars'].append({
                 'name': 'Thorin Thabiticus',
