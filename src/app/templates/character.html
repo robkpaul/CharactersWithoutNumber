@@ -16,3 +16,7 @@
     </div>
 </div>
 {% endblock %}
+
+{% block scripts %}
+<script id="roll_script" src="{% static 'js/roll_handler.js' %}" data-room="{{campaign_id}}"></script>
+{% endblock %}

@@ -14,21 +14,24 @@
                 <h3>{{c.name}}</h3> 
                 <h4>{{c.class}} {{c.level}}</h4>
                 <div>HP: {{c.hp_max}} | AC: {{c.ac}} | Notice: {{c.notice}} </div>
-                <hr>
             </div>
             {% endfor %}
         </div>
-        <div class="grid-y grid-padding-y  ">
+        <div class="grid-y medium-grid-frame grid-padding-y  ">
             <div class="cell">
                 <h4>Add Player</h4>   
             </div>
-            <div class="grid-y grid-padding-y">
-                
+            <div id="dicelog" class="cell large-6 small-6 grid-y" style="overflow:scroll">
             </div>
-            <form id="websocket-form">
+            <form class="cell" id="websocket-form">
+                <label for="message">Roll Entry:</label>
                 <input type="text" name="message"/>
             </form>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script id="roll_script" src="{% static 'js/roll_handler.js' %}" data-room="{{campaign_id}}"></script>
 {% endblock %}
