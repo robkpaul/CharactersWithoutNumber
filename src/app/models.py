@@ -11,6 +11,9 @@ class Vocation(models.Model):
 class Focus(models.Model):
     name = models.CharField(max_length=128)
 
+    class Meta:
+        verbose_name_plural = "Foci"
+
 class Spell(models.Model):
     name = models.CharField(max_length=128)
     level = models.IntegerField()
@@ -18,17 +21,11 @@ class Spell(models.Model):
 class Item(models.Model):
     name = models.CharField(max_length=128)
 
-class Equipable(Item):
-    equipped = models.BooleanField()
-
-    class Meta:
-        abstract = True
-
-class Armor(Equipable):
+class Armor(Item):
     ac = models.IntegerField()
 
-class Weapon(Equipable):
-    atk = models.PositiveIntegerField()
+class Weapon(Item):
+    atk = models.CharField(max_length=16)
 
 
 # Models for the App
@@ -63,39 +60,39 @@ class Character(models.Model):
     xp = models.IntegerField(default=0) # xp -- optional rule
     hp = models.PositiveIntegerField() # current hit points
     hp_max = models.PositiveIntegerField() # maximum hit points
-    ac = models.IntegerField # armor class
+    ac = models.IntegerField() # armor class
     strain = models.IntegerField(default=0) # system strain -- optional rule
     
     # Attributes
-    atr_str = models.IntegerField() # strength
-    atr_dex = models.IntegerField() # dexterity
-    atr_con = models.IntegerField() # constitution
-    atr_int = models.IntegerField() # intelligence
-    atr_wis = models.IntegerField() # wisdom
-    atr_cha = models.IntegerField() # charisma
+    atr_str = models.IntegerField(default=0) # strength
+    atr_dex = models.IntegerField(default=0) # dexterity
+    atr_con = models.IntegerField(default=0) # constitution
+    atr_int = models.IntegerField(default=0) # intelligence
+    atr_wis = models.IntegerField(default=0) # wisdom
+    atr_cha = models.IntegerField(default=0) # charisma
 
     # Skills
-    skl_admn = models.IntegerField() # administer
-    skl_conn = models.IntegerField() # connect
-    skl_conv = models.IntegerField() # convince
-    skl_crft = models.IntegerField() # craft
-    skl_exrt = models.IntegerField() # exert
-    skl_heal = models.IntegerField() # heal
-    skl_know = models.IntegerField() # know
-    skl_lead = models.IntegerField() # lead
-    skl_magc = models.IntegerField() # magic
-    skl_noti = models.IntegerField() # notice
-    skl_perf = models.IntegerField() # performance
-    skl_pray = models.IntegerField() # pray
-    skl_pnch = models.IntegerField() # punch
-    skl_ride = models.IntegerField() # ride
-    skl_sail = models.IntegerField() # sail
-    skl_shot = models.IntegerField() # shot 
-    skl_snek = models.IntegerField() # sneak
-    skl_stab = models.IntegerField() # stab
-    skl_srvv = models.IntegerField() # survive
-    skl_trde = models.IntegerField() # trade
-    skl_work = models.IntegerField() # work
+    skl_admn = models.IntegerField(default=0) # administer
+    skl_conn = models.IntegerField(default=0) # connect
+    skl_conv = models.IntegerField(default=0) # convince
+    skl_crft = models.IntegerField(default=0) # craft
+    skl_exrt = models.IntegerField(default=0) # exert
+    skl_heal = models.IntegerField(default=0) # heal
+    skl_know = models.IntegerField(default=0) # know
+    skl_lead = models.IntegerField(default=0) # lead
+    skl_magc = models.IntegerField(default=0) # magic
+    skl_noti = models.IntegerField(default=0) # notice
+    skl_perf = models.IntegerField(default=0) # performance
+    skl_pray = models.IntegerField(default=0) # pray
+    skl_pnch = models.IntegerField(default=0) # punch
+    skl_ride = models.IntegerField(default=0) # ride
+    skl_sail = models.IntegerField(default=0) # sail
+    skl_shot = models.IntegerField(default=0) # shot 
+    skl_snek = models.IntegerField(default=0) # sneak
+    skl_stab = models.IntegerField(default=0) # stab
+    skl_srvv = models.IntegerField(default=0) # survive
+    skl_trde = models.IntegerField(default=0) # trade
+    skl_work = models.IntegerField(default=0) # work
 
     # Character Attributes that are handled by other Models
     background = models.ForeignKey(
@@ -123,20 +120,6 @@ class Character(models.Model):
     # Equipment and Inventory
     ## Currency
     wealth = models.PositiveIntegerField()  # measured in copper
-
-    ## Inventory
-    items = models.ManyToManyField(
-        Item,
-        related_name='character_items'
-    )
-    armor = models.ManyToManyField(
-        Armor,
-        related_name='character_armor'
-    )
-    weapons = models.ManyToManyField(
-        Weapon,
-        related_name='character_weapons'
-    )
 
     # Metadata - External to Character Sheet, used by the app itself
     owner = models.ForeignKey(
@@ -240,3 +223,9 @@ class Character(models.Model):
         sheet['level'] = self.level
         sheet['class'] = self.vocation
         return sheet
+
+class InventoryItem(models.Model):
+    equipped = models.BooleanField(default=False)
+    quantity = models.IntegerField(default=1)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    owner = models.ForeignKey(Character, on_delete=models.CASCADE, related_name="inventory")
