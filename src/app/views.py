@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
+from django.http import Http404, JsonResponse, HttpResponse
 from app.models import Campaign, Character
 
 def index(request):
@@ -10,25 +10,20 @@ def dicelog(request):
 
 def campaign(request, **kwargs):
     cid = kwargs['campaign_id']
-    #campaign = Campaign.objects.get(pk=cid)
-    context = {
-        'campaign_id': cid,
-        'chars': [], # handled in for loop
-        'campaign': 'test',#campaign.name
-        'username': 'rokepa'
-    }
-    context['chars'].append({
-                'name': 'Thorin Thabiticus',
-                'hp_max': 10,
-                'ac': 20,
-                'level': 1,
-                'class': 'Warrior',
-                'notice': 10
-    })
-    # for c in campaign.characters.all():
-    #     context['chars'].append(c.brief())
+    try:
+        campaign = Campaign.objects.get(pk=cid)
+        context = {
+            'campaign_id': cid,
+            'chars': [], # handled in for loop
+            'campaign': campaign.title,
+            'username': 'rokepa'
+        }
+        for c in campaign.characters.all():
+            context['chars'].append(c.brief())
 
-    return render(request, 'campaign.html', context=context )
+        return render(request, 'campaign.html', context=context )
+    except Campaign.DoesNotExist:
+        return HttpResponse('404: Campaign Does Not Exist')
 
 def character(request, **kwargs):
     cid = kwargs['character_id']
