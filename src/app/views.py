@@ -1,12 +1,9 @@
 from django.shortcuts import render
-from django.http import Http404, JsonResponse, HttpResponse
+from django.http import HttpResponse
 from app.models import Campaign, Character
 
 def index(request):
     return render(request, 'index.html')
-
-def dicelog(request):
-    return render(request, 'dicelog.html')
 
 def campaign(request, **kwargs):
     cid = kwargs['campaign_id']
