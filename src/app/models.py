@@ -5,11 +5,20 @@ from django.contrib.auth.models import User
 class Background(models.Model):
     name = models.CharField(max_length=128)
 
+    def __str__(self):
+        return self.name
+
 class Vocation(models.Model):
     name = models.CharField(max_length=128)
 
+    def __str__(self):
+        return self.name
+
 class Focus(models.Model):
     name = models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name_plural = "Foci"
@@ -18,14 +27,27 @@ class Spell(models.Model):
     name = models.CharField(max_length=128)
     level = models.IntegerField()
 
+    def __str__(self):
+        return '%s (%s)' % (self.name, self.level)
+
+
 class Item(models.Model):
     name = models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.name
 
 class Armor(Item):
     ac = models.IntegerField()
 
+    def __str__(self):
+        return self.name
+
 class Weapon(Item):
     atk = models.CharField(max_length=16)
+
+    def __str__(self):
+        return self.name
 
 
 # Models for the App
@@ -39,6 +61,9 @@ class Profile(models.Model):
         null=False
     )
 
+    def __str__(self):
+        return self.username
+
 class Campaign(models.Model):
     title = models.CharField(max_length=127)
     owner = models.ForeignKey(
@@ -47,6 +72,9 @@ class Campaign(models.Model):
         related_name="owned_campaigns"
     )
     players = models.ManyToManyField(Profile)
+
+    def __str__(self):
+        return self.title
 
 #Character Sheet Models
 
@@ -109,11 +137,15 @@ class Character(models.Model):
     )
     foci = models.ManyToManyField(
         Focus, 
-        related_name='character_foci'
+        related_name='character_foci',
+        blank=True,
+        null = True
     )
     spells = models.ManyToManyField(
         Spell, 
-        related_name='character_spells'
+        related_name='character_spells',
+        blank=True,
+        null = True
     )
 
 
@@ -223,6 +255,9 @@ class Character(models.Model):
         sheet['level'] = self.level
         sheet['class'] = self.vocation
         return sheet
+
+    def __str__(self):
+        return '%s (%s %s)' % (self.name, self.level, self.vocation)
 
 class InventoryItem(models.Model):
     equipped = models.BooleanField(default=False)
