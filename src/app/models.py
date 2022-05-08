@@ -222,26 +222,26 @@ class Character(models.Model):
                 'name': s.name,
                 'level': s.level
             })
-        for i in self.items.all():
-            sheet['inventory'].append({
-                'type': 0,
-                'name': i.name
-            })
-        for i in self.armor.all():
-            sheet['inventory'].append({
-                'type': 'armor',
-                'name': i.name,
+        for i in self.inventory.all():
+            item = {
+                'type': 'item',
+                'quantity': i.quantity,
                 'equipped': i.equipped,
-                'ac': i.ac
-            })
-        for i in self.weapons.all():
-            sheet['inventory'].append({
-                'type': 'armor',
-                'name': i.name,
-                'equipped': i.equipped,
-                'attack': i.atk
-            })
-
+                'name': i.item.name
+            }
+            try:
+                a = Armor.objects.get(pk=i.item.id)
+                item['ac'] = a.ac
+                item['type'] = 'armor'
+            except Armor.DoesNotExist:
+                try:
+                    w = Weapon.objects.get(pk=i.item.id)
+                    item['type'] = 'weapon'
+                    item['atk'] = w.atk
+                except Weapon.DoesNotExist:
+                    pass
+            print(item)
+            sheet['inventory'].append(item)
         return sheet
 
     def brief(self):
@@ -264,3 +264,6 @@ class InventoryItem(models.Model):
     quantity = models.IntegerField(default=1)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     owner = models.ForeignKey(Character, on_delete=models.CASCADE, related_name="inventory")
+
+    def __str__(self):
+        return '%sx %s owned by %s' % (self.quantity, self.item, self.owner)
