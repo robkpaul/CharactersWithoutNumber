@@ -24,8 +24,13 @@ def campaign(request, **kwargs):
 
 def character(request, **kwargs):
     cid = kwargs['character_id']
-    character = Character.objects.get(pk=cid)
-    context = {
-        'sheet': character.full()
-    }
-    return render(request, 'character.html', context=context)
+    try:
+        character = Character.objects.get(pk=cid)
+        context = {
+            'sheet': character.full(),
+            'username': 'rokepa',
+            'campaign_id': character.campaign.id
+        }
+        return render(request, 'character.html', context=context)
+    except Character.DoesNotExist:
+        return HttpResponse('404: Character Does Not Exist')
