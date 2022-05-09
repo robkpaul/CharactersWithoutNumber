@@ -33,22 +33,20 @@ class Spell(models.Model):
 
 class Item(models.Model):
     name = models.CharField(max_length=128)
+    equipable = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
 
 class Armor(Item):
+    equipable = True
     ac = models.IntegerField()
-
-    def __str__(self):
-        return self.name
+Armor._meta.get_field('equipable').default = True
 
 class Weapon(Item):
+    equipable = True
     atk = models.CharField(max_length=16)
-
-    def __str__(self):
-        return self.name
-
+Weapon._meta.get_field('equipable').default = True
 
 # Models for the App
 class Profile(models.Model):
@@ -71,7 +69,7 @@ class Campaign(models.Model):
         on_delete=models.CASCADE, 
         related_name="owned_campaigns"
     )
-    players = models.ManyToManyField(Profile)
+    players = models.ManyToManyField(Profile, related_name="participant_campaigns")
 
     def __str__(self):
         return self.title
@@ -139,13 +137,11 @@ class Character(models.Model):
         Focus, 
         related_name='character_foci',
         blank=True,
-        null = True
     )
     spells = models.ManyToManyField(
         Spell, 
         related_name='character_spells',
         blank=True,
-        null = True
     )
 
 
