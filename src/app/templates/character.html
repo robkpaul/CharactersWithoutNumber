@@ -28,5 +28,7 @@
 {% endblock %}
 
 {% block scripts %}
+{% if campaign_id != -1 %}
 <script id="roll_script" src="{% static 'js/roll_handler.js' %}" data-room="{{campaign_id}}" data-user="{{username}}"></script>
+{% endif %}
 {% endblock %}
