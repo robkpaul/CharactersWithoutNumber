@@ -25,7 +25,7 @@ class RegistrationForm(UserCreationForm):
         return user
 
 class CharacterCreationForm(forms.Form):
-    name_field = forms.CharField(
+    name = forms.CharField(
         label='Name',
         max_length=64
     )
@@ -65,44 +65,44 @@ class CharacterCreationForm(forms.Form):
     def save(self, commit=True):
         if commit:
             char = Character.objects.create(
-                name = self.name,
-                hp = self.hp,
-                hp_max = self.hp,
-                atr_str = self.atr_str,
-                atr_dex = self.atr_dex,
-                atr_con = self.atr_con,
-                atr_int = self.atr_int,
-                atr_wis = self.atr_wis,
-                atr_cha = self.atr_cha,
-                skl_admn = self.skl_admn,
-                skl_conn = self.skl_conn,
-                skl_conv = self.skl_conv,
-                skl_crft = self.skl_crft,
-                skl_exrt = self.skl_exrt,
-                skl_heal = self.skl_heal,
-                skl_know = self.skl_know,
-                skl_lead = self.skl_lead,
-                skl_magc = self.skl_magc,
-                skl_noti = self.skl_noti,
-                skl_perf = self.skl_perf,
-                skl_pray =self.skl_pray,
-                skl_pnch = self.skl_pnch,
-                skl_ride = self.skl_ride,
-                skl_sail = self.skl_sail,
-                skl_shot = self.skl_shot,
-                skl_snek = self.skl_snek,
-                skl_stab = self.skl_stab,
-                skl_srvv = self.skl_srvv,
-                skl_trde = self.skl_trde,
-                skl_work = self.skl_work,
-                background = self.background,
-                vocation = self.vocation,
+                name = self.data['name'],
+                hp = self.data['hp'],
+                hp_max = self.data['hp'],
+                atr_str = self.data['atr_str'],
+                atr_dex = self.data['atr_dex'],
+                atr_con = self.data['atr_con'],
+                atr_int = self.data['atr_int'],
+                atr_wis = self.data['atr_wis'],
+                atr_cha = self.data['atr_cha'],
+                skl_admn = self.data['skl_admn'],
+                skl_conn = self.data['skl_conn'],
+                skl_conv = self.data['skl_conv'],
+                skl_crft = self.data['skl_crft'],
+                skl_exrt = self.data['skl_exrt'],
+                skl_heal = self.data['skl_heal'],
+                skl_know = self.data['skl_know'],
+                skl_lead = self.data['skl_lead'],
+                skl_magc = self.data['skl_magc'],
+                skl_noti = self.data['skl_noti'],
+                skl_perf = self.data['skl_perf'],
+                skl_pray =self.data['skl_pray'],
+                skl_pnch = self.data['skl_pnch'],
+                skl_ride = self.data['skl_ride'],
+                skl_sail = self.data['skl_sail'],
+                skl_shot = self.data['skl_shot'],
+                skl_snek = self.data['skl_snek'],
+                skl_stab = self.data['skl_stab'],
+                skl_srvv = self.data['skl_srvv'],
+                skl_trde = self.data['skl_trde'],
+                skl_work = self.data['skl_work'],
+                background = Background.objects.get(pk=self.data['background']),
+                vocation = Vocation.objects.get(pk=self.data['vocation']),
                 owner = self.owner
             )
             char.save()
+            return char
+    def __init__(self, *args, **kwargs):
+        self.owner = kwargs.pop('user')
+        super(CharacterCreationForm, self).__init__(*args, **kwargs)
 
-            def __init__(self, user, *args, **kwargs):
-                self.owner = user
-                super(CharacterCreationForm, self).__init__(*args, **kwargs)
-
-        return char
+        

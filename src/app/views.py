@@ -95,3 +95,20 @@ def character(request, **kwargs):
     except Character.DoesNotExist:
         pass
     return HttpResponse('403: No Access')
+
+@login_required()
+def create_character(request):
+    if(request.method == 'POST'):
+        form = forms.CharacterCreationForm(request.POST, user=request.user.profile)
+        if(form.is_valid()):
+            char = form.save()
+            return redirect('/character/%s' % char.id)
+        return redirect('/home')
+    else:
+        form = forms.CharacterCreationForm(user=request.user.profile)
+    
+    context = {
+        'title': 'Create',
+        'form': form
+    }
+    return render(request, 'create_character.html', context=context)

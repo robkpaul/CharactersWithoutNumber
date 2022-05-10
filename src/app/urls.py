@@ -9,5 +9,6 @@ urlpatterns = [
     path('register', views.registration_view),
     path('home', views.home),
     path('campaign/<int:campaign_id>', views.campaign),
-    path('character/<int:character_id>', views.character)
+    path('character/<int:character_id>', views.character),
+    path('create/character', views.create_character)
 ]
