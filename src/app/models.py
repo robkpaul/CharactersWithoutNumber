@@ -10,6 +10,7 @@ class Background(models.Model):
 
 class Vocation(models.Model):
     name = models.CharField(max_length=128)
+    base_atk = models.IntegerField()
 
     def __str__(self):
         return self.name
