@@ -1,15 +1,38 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from app.models import Campaign, Character, Profile
+from django.contrib.auth.decorators import login_required
 
+@login_required()
 def index(request):
-    return redirect('home')
+    return redirect('/home')
 
 def home(request):
-    context = {}
     profile = Profile.objects.get(pk=1)
     #profile = request.user.profile
-    context['username'] = profile.username
+    context = {
+        'chars': [],
+        'campaigns': [],
+        'username': profile.username
+    }   
+    for c in profile.characters.all():
+        context['chars'].append({
+            'text': str(c),
+            'id': c.id
+        })
+    for c in profile.participant_campaigns.all():
+        context['campaigns'].append({
+            'text': str(c),
+            'id': c.id,
+            'owner': False
+        })
+    for c in profile.owned_campaigns.all():
+        context['campaigns'].append({
+            'text': str(c),
+            'id': c.id,
+            'owner': True
+        })
+    print(context)
     return render(request, 'home.html', context=context)
 
 def campaign(request, **kwargs):

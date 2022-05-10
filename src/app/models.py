@@ -150,7 +150,8 @@ class Character(models.Model):
     # Metadata - External to Character Sheet, used by the app itself
     owner = models.ForeignKey(
         Profile, 
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='characters'
     )
     campaign = models.ForeignKey(
         Campaign, 
@@ -251,7 +252,7 @@ class Character(models.Model):
         return sheet
 
     def __str__(self):
-        return '%s (%s %s)' % (self.name, self.level, self.vocation)
+        return '%s (%s %s)' % (self.name, self.vocation, self.level)
 
 class InventoryItem(models.Model):
     equipped = models.BooleanField(default=False)
