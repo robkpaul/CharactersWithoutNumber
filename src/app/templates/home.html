@@ -6,4 +6,25 @@
 {% endblock %}
 
 {% block content %}
+<div class="grid-container full">
+    <div class="grid-x grid-padding-x">
+        <div class="grid-y grid-padding-y medium-5 cell">
+            <h2>Characters</h2>
+            {% for c in chars %}
+                <h4><a href="/character/{{c.id}}">{{c.text}}</a></h4>
+            {% endfor %}
+        </div>
+        <div class="grid-y grid-padding-y medium-5 cell">
+            <h2>Campaigns</h2>
+            {% for c in campaigns %}
+                <h4><a href="/campaign/{{c.id}}">{{c.text}}</a></h4>
+            {% endfor %}
+        </div>
+        <div class="grid-y grid-padding-y medium-2 cell">
+            <div class="cell"></div>
+            <a href="/create/campaign" class="cell button">New Campaign</a>
+            <a href="/create/character" class="cell button">New Character</a>
+        </div>
+    </div>
+</div>
 {% endblock %}
