@@ -87,8 +87,10 @@ def character(request, **kwargs):
             context = {
                 'sheet': character.full(),
                 'username': request.user.username,
-                'campaign_id': character.campaign.id
+                'campaign_id': -1
             }
+            if(character.campaign):
+                context['campaign_id'] = character.campaign.id
             return render(request, 'character.html', context=context)
     except Character.DoesNotExist:
         pass

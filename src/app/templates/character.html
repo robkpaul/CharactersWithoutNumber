@@ -13,14 +13,16 @@
                 
             </div>
         </div>
+        {% if campaign_id != -1 %}
         <div class="cell grid-y medium-grid-frame grid-padding-y">
             <div id="dicelog" class="cell large-6 small-6 grid-y" style="overflow:auto">
             </div>
-            <form class="cell" id="websocket-form">
+            <form class="cell " id="websocket-form">
                 <label for="message">Roll Entry:</label>
                 <input type="text" name="message"/>
             </form>
         </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
