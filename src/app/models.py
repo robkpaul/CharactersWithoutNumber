@@ -41,12 +41,10 @@ class Item(models.Model):
 class Armor(Item):
     equipable = True
     ac = models.IntegerField()
-Armor._meta.get_field('equipable').default = True
 
 class Weapon(Item):
     equipable = True
     atk = models.CharField(max_length=16)
-Weapon._meta.get_field('equipable').default = True
 
 # Models for the App
 class Profile(models.Model):
@@ -67,7 +65,11 @@ class Campaign(models.Model):
         on_delete=models.CASCADE, 
         related_name='owned_campaigns'
     )
-    players = models.ManyToManyField(Profile, related_name='participant_campaigns')
+    players = models.ManyToManyField(
+        Profile, 
+        related_name='participant_campaigns',
+        blank=True
+    )
 
     def __str__(self):
         return self.title
@@ -80,20 +82,20 @@ class Character(models.Model):
         max_length=64, 
         default='Thorin Thabiticus'
     )
-    level = models.IntegerField(default=0)
+    level = models.IntegerField(default=1)
     xp = models.IntegerField(default=0) # xp -- optional rule
-    hp = models.PositiveIntegerField() # current hit points
-    hp_max = models.PositiveIntegerField() # maximum hit points
-    ac = models.IntegerField() # armor class
+    hp = models.PositiveIntegerField(default=1) # current hit points
+    hp_max = models.PositiveIntegerField(default=1) # maximum hit points
+    ac = models.IntegerField(default=10) # armor class
     strain = models.IntegerField(default=0) # system strain -- optional rule
     
     # Attributes
-    atr_str = models.IntegerField(default=0) # strength
-    atr_dex = models.IntegerField(default=0) # dexterity
-    atr_con = models.IntegerField(default=0) # constitution
-    atr_int = models.IntegerField(default=0) # intelligence
-    atr_wis = models.IntegerField(default=0) # wisdom
-    atr_cha = models.IntegerField(default=0) # charisma
+    atr_str = models.IntegerField(default=10) # strength
+    atr_dex = models.IntegerField(default=10) # dexterity
+    atr_con = models.IntegerField(default=10) # constitution
+    atr_int = models.IntegerField(default=10) # intelligence
+    atr_wis = models.IntegerField(default=10) # wisdom
+    atr_cha = models.IntegerField(default=10) # charisma
 
     # Skills
     skl_admn = models.IntegerField(default=0) # administer
@@ -145,7 +147,7 @@ class Character(models.Model):
 
     # Equipment and Inventory
     ## Currency
-    wealth = models.PositiveIntegerField()  # measured in copper
+    wealth = models.PositiveIntegerField(default=0)  # measured in copper
 
     # Metadata - External to Character Sheet, used by the app itself
     owner = models.ForeignKey(
@@ -156,6 +158,7 @@ class Character(models.Model):
     campaign = models.ForeignKey(
         Campaign, 
         on_delete=models.SET_NULL, 
+        blank=True,
         null=True, 
         related_name='characters'
     )
@@ -225,12 +228,12 @@ class Character(models.Model):
                 'name': i.item.name
             }
             try:
-                a = Armor.objects.get(pk=i.item.id)
+                a = item.armor
                 item['ac'] = a.ac
                 item['type'] = 'armor'
             except Armor.DoesNotExist:
                 try:
-                    w = Weapon.objects.get(pk=i.item.id)
+                    w = item.weapon
                     item['type'] = 'weapon'
                     item['atk'] = w.atk
                 except Weapon.DoesNotExist:

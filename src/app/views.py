@@ -1,15 +1,37 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
-from app.models import Campaign, Character, Profile
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+
+from app.models import Campaign, Character, Profile
+from . import forms
 
 @login_required()
 def index(request):
     return redirect('/home')
 
+def logout_view(request):
+    logout(request)
+    return redirect('/login')
+
+def registration_view(request):
+    if(request.method == 'POST'):
+        form = forms.RegistrationForm(request.POST)
+        if(form.is_valid()):
+            form.save()
+            return redirect('/login')
+    else:
+        form = forms.RegistrationForm()
+    
+    context = {
+        'title': 'Register',
+        'form': form
+    }
+    return render(request, 'registration/register.html', context=context)
+
+@login_required()
 def home(request):
-    profile = Profile.objects.get(pk=1)
-    #profile = request.user.profile
+    profile = request.user.profile
     context = {
         'chars': [],
         'campaigns': [],
@@ -35,32 +57,39 @@ def home(request):
     print(context)
     return render(request, 'home.html', context=context)
 
+@login_required()
 def campaign(request, **kwargs):
     cid = kwargs['campaign_id']
     try:
         campaign = Campaign.objects.get(pk=cid)
-        context = {
-            'campaign_id': cid,
-            'chars': [], # handled in for loop
-            'campaign': campaign.title,
-            'username': 'rokepa'   
-        }
-        for c in campaign.characters.all():
-            context['chars'].append(c.brief())
+        print(campaign.players.all())
+        if(campaign.owner == request.user.profile or request.user.profile in campaign.players.all()):
+            context = {
+                'campaign_id': cid,
+                'chars': [], # handled in for loop
+                'campaign': campaign.title,
+                'username': request.user.username  
+            }
+            for c in campaign.characters.all():
+                context['chars'].append(c.brief())
 
-        return render(request, 'campaign.html', context=context )
+            return render(request, 'campaign.html', context=context )
     except Campaign.DoesNotExist:
-        return HttpResponse('404: Campaign Does Not Exist')
+        pass
+    return HttpResponse('403: No Access')
 
+@login_required()
 def character(request, **kwargs):
     cid = kwargs['character_id']
     try:
         character = Character.objects.get(pk=cid)
-        context = {
-            'sheet': character.full(),
-            'username': 'rokepa',
-            'campaign_id': character.campaign.id
-        }
-        return render(request, 'character.html', context=context)
+        if(character.owner == request.user.profile):
+            context = {
+                'sheet': character.full(),
+                'username': request.user.username,
+                'campaign_id': character.campaign.id
+            }
+            return render(request, 'character.html', context=context)
     except Character.DoesNotExist:
-        return HttpResponse('404: Character Does Not Exist')
+        pass
+    return HttpResponse('403: No Access')

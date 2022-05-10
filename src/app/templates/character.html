@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-{{title}}
+{{sheet.name}}
 {% endblock %}
 
 {% block content %}
@@ -26,5 +26,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script id="roll_script" src="{% static 'js/roll_handler.js' %}" data-room="{{campaign_id}}"></script>
+<script id="roll_script" src="{% static 'js/roll_handler.js' %}" data-room="{{campaign_id}}" data-user="{{username}}"></script>
 {% endblock %}
