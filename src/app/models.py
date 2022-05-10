@@ -21,7 +21,7 @@ class Focus(models.Model):
         return self.name
 
     class Meta:
-        verbose_name_plural = "Foci"
+        verbose_name_plural = 'Foci'
 
 class Spell(models.Model):
     name = models.CharField(max_length=128)
@@ -52,12 +52,10 @@ Weapon._meta.get_field('equipable').default = True
 class Profile(models.Model):
     user = models.OneToOneField(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='profile'
     )
-    username = models.CharField(
-        max_length=32, 
-        null=False
-    )
+    username = models.CharField(max_length=32, null=False)
 
     def __str__(self):
         return self.username
@@ -67,9 +65,9 @@ class Campaign(models.Model):
     owner = models.ForeignKey(
         Profile, 
         on_delete=models.CASCADE, 
-        related_name="owned_campaigns"
+        related_name='owned_campaigns'
     )
-    players = models.ManyToManyField(Profile, related_name="participant_campaigns")
+    players = models.ManyToManyField(Profile, related_name='participant_campaigns')
 
     def __str__(self):
         return self.title
@@ -259,7 +257,7 @@ class InventoryItem(models.Model):
     equipped = models.BooleanField(default=False)
     quantity = models.IntegerField(default=1)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    owner = models.ForeignKey(Character, on_delete=models.CASCADE, related_name="inventory")
+    owner = models.ForeignKey(Character, on_delete=models.CASCADE, related_name='inventory')
 
     def __str__(self):
         return '%sx %s owned by %s' % (self.quantity, self.item, self.owner)
