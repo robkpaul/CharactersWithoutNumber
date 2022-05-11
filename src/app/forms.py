@@ -123,11 +123,11 @@ class CampaignCreationForm(forms.Form):
             return campaign
         return None
 
-class AddToCampaignForm(forms.Form):
+class AddCharToCampaignForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.owner = kwargs.pop('user')
         self.char = Character.objects.get(pk=kwargs.pop('cid'))
-        super(AddToCampaignForm, self).__init__(*args, **kwargs)
+        super(AddCharToCampaignForm, self).__init__(*args, **kwargs)
         self.fields['campaign'].queryset = self.owner.participant_campaigns
     
     campaign = forms.ModelChoiceField(
@@ -140,4 +140,43 @@ class AddToCampaignForm(forms.Form):
             self.char.campaign = Campaign.objects.get(pk=self.data['campaign'])
             self.char.save()
             return self.char
+        return None
+
+class AddPlayerToCampaignForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.campaign = Campaign.objects.get(pk=kwargs.pop('cid'))
+        super(AddPlayerToCampaignForm, self).__init__(*args, **kwargs)
+    
+    username = forms.CharField(
+        max_length=64,
+        label='Username'
+    )
+
+    def save(self, commit=True):
+        if commit:
+            player = Profile.objects.get(username=self.data['username'])
+            if player != self.campaign.owner:
+                self.campaign.players.add(player)
+                self.campaign.save()
+            return self.campaign
+        return None
+
+class RemovePlayerFromCampaignForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.campaign = Campaign.objects.get(pk=kwargs.pop('cid'))
+        super(RemovePlayerFromCampaignForm, self).__init__(*args, **kwargs)
+        self.fields['player'].queryset = self.campaign.players
+    
+    player= forms.ModelChoiceField(
+        required=True,
+        queryset= Profile.objects.all()
+    )
+    
+    def save(self, commit=True):
+        if commit:
+            player = Profile.objects.get(pk=self.data['player'])
+            self.campaign.players.remove(player)
+            # TODO: Remove characters from the player being removed
+            self.campaign.save()
+            return self.campaign
         return None

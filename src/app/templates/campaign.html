@@ -17,11 +17,12 @@
             </div>
             {% endfor %}
         </div>
-        <div class="cell grid-y medium-grid-frame grid-padding-y">
-            <div class="cell">
-                <h4>Add Player</h4>   
-            </div>
-            <div id="dicelog" class="cell large-6 small-6 grid-y" style="overflow:auto">
+        <div class="cell grid-y medium-grid-frame grid-padding-y auto">
+            {% if isowner %}
+            <a class="cell button full" href="{{request.path}}/add_player" style="margin-top: 10px;">Add Player</a>
+            <a class="cell button full" href="{{request.path}}/remove_player" style="margin-top: 10px;">Remove Player</a>
+            {% endif %}
+            <div id="dicelog" class="cell large-6 medium-3 grid-y" style="overflow:auto">
             </div>
             <form class="cell" id="websocket-form">
                 <label for="message">Roll Entry:</label>

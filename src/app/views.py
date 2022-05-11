@@ -135,20 +135,61 @@ def create_campaign(request):
     return render(request, 'base_form.html', context=context)
 
 @login_required()
-def add_to_campaign(request, **kwargs):
+def add_char_to_campaign(request, **kwargs):
     cid = kwargs['character_id']
     char = Character.objects.get(pk=cid)
     if(request.user.profile == char.owner):
         if(request.method == 'POST'):
-            form = forms.AddToCampaignForm(request.POST, user = request.user.profile, cid = cid)
+            form = forms.AddCharToCampaignForm(request.POST, user = request.user.profile, cid = cid)
             if(form.is_valid()):
                 char = form.save()
                 return redirect('/character/%s' % char.id)
             return redirect('/home')
         else:
-            form = forms.AddToCampaignForm(user = request.user.profile, cid = cid)
+            form = forms.AddCharToCampaignForm(user = request.user.profile, cid = cid)
         context = {
             'title': 'Add Character to Campaign',
             'form': form
         }
         return render(request, 'base_form.html', context=context)
+    return HttpResponse('403: No Access')
+
+@login_required()
+def add_player_to_campaign(request, **kwargs):
+    cid = kwargs['campaign_id']
+    camp = Campaign.objects.get(pk=cid)
+    if(request.user.profile == camp.owner):
+        if(request.method == 'POST'):
+            form = forms.AddPlayerToCampaignForm(request.POST, cid = cid)
+            if(form.is_valid()):
+                camp= form.save()
+                return redirect('/campaign/%s' % camp.id)
+            return redirect('/home')
+        else:
+            form = forms.AddPlayerToCampaignForm(cid = cid)
+        context = {
+            'title': 'Add Player to Campaign',
+            'form': form
+        }
+        return render(request, 'base_form.html', context=context)
+    return HttpResponse('403: No Access') 
+
+@login_required()
+def remove_player_from_campaign(request, **kwargs):
+    cid = kwargs['campaign_id']
+    camp = Campaign.objects.get(pk=cid)
+    if(request.user.profile == camp.owner):
+        if(request.method == 'POST'):
+            form = forms.RemovePlayerFromCampaignForm(request.POST, cid = cid)
+            if(form.is_valid()):
+                camp= form.save()
+                return redirect('/campaign/%s' % camp.id)
+            return redirect('/home')
+        else:
+            form = forms.RemovePlayerFromCampaignForm(cid = cid)
+        context = {
+            'title': 'Add Player to Campaign',
+            'form': form
+        }
+        return render(request, 'base_form.html', context=context)
+    return HttpResponse('403: No Access') 

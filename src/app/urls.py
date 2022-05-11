@@ -12,5 +12,7 @@ urlpatterns = [
     path('character/<int:character_id>', views.character),
     path('create/character', views.create_character),
     path('create/campaign', views.create_campaign),
-    path('character/<int:character_id>/add_campaign', views.add_to_campaign)
+    path('character/<int:character_id>/add_campaign', views.add_char_to_campaign),
+    path('campaign/<int:campaign_id>/add_player', views.add_player_to_campaign),
+    path('campaign/<int:campaign_id>/remove_player', views.remove_player_from_campaign)
 ]
