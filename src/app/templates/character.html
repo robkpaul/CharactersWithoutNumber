@@ -9,8 +9,43 @@
 <div class="grid-container full">
     <div class="grid-x grid-padding-x">
         <div id="character-sheet" class="grid-y grid-padding-y large-9 medium-12 cell">
-            <div>
-                
+            <h2>{{sheet.name}}</h2>
+            <div class="grid-x grid-padding-x cell">
+                <h4 class="medium-2 cell">{{sheet.vocation}} {{sheet.level}}</h4>
+                <h4 class="medium-2 cell">Max HP: {{sheet.hp}}</h4>
+            </div>
+            <div class="grid-x grid-padding-x small-up-6 cell">
+                {% for a in sheet.attributes.items %}
+                    <div class="cell"> {{a.0|upper}}: {{a.1}}</div>
+                {% endfor %}
+            </div>
+            <div class="grid-x grid-padding-x cell">
+                <div class="grid-x grid-padding-x small-up-3 medium-6 cell">
+                {% for a in sheet.skills.items %}
+                    <div class="cell"> {{a.0}}: {{a.1}}</div>
+                {% endfor %}
+                </div>
+                <div class="grid-y medium-6 cell">
+                    <h3 class="cell">Foci</h3>
+                    {% for f in sheet.foci %}
+                        <div class="cell">{{f}}</div>
+                    {% endfor %}
+                </div>
+                <div class="grid-y medium-6 cell">
+                    <h3 class="cell">Inventory</h3>
+                    {% for i in sheet.inventory %}
+                        <div class="cell">{{i.quantity}}x {{i.name}}</div>
+                    {% endfor %}
+                    <a href="{{request.path}}/add_item" class="cell button full">Add Item</a>
+                </div>
+                {% if sheet.vocation != 'Warrior' %}
+                <div class="grid-y medium-6 cell">
+                    <h3 class="cell">Spells</h3>
+                    {% for s in sheet.spells %}
+                        <div class="cell">{{s}}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
             </div>
         </div>
         <div class="cell grid-y grid-padding-y auto">
