@@ -68,7 +68,8 @@ def campaign(request, **kwargs):
                 'campaign_id': cid,
                 'chars': [], # handled in for loop
                 'campaign': campaign.title,
-                'username': request.user.username  
+                'username': request.user.username,
+                'isowner': request.user.profile == campaign.owner
             }
             for c in campaign.characters.all():
                 context['chars'].append(c.brief())
@@ -108,10 +109,12 @@ def create_character(request):
         form = forms.CharacterCreationForm(user=request.user.profile)
     
     context = {
-        'title': 'Create',
-        'form': form
+        'title': 'Create Character',
+        'form': form,
+        'text': 'In order to best create your character, I recommend utilizing the rules found in the first chapter of the <a href="https://www.drivethrurpg.com/product/348809/Worlds-Without-Number-Free-Edition">free version of Worlds Without Number.</a>',
+        'button': 'Create'
     }
-    return render(request, 'create_character.html', context=context)
+    return render(request, 'base_form.html', context=context)
 
 @login_required()
 def create_campaign(request):
@@ -125,7 +128,27 @@ def create_campaign(request):
         form = forms.CampaignCreationForm(user=request.user.profile)
     
     context = {
-        'title': 'Create',
-        'form': form
+        'title': 'Create Campaign',
+        'form': form,
+        'button': 'Create'
     }
-    return render(request, 'create_campaign.html', context=context)
+    return render(request, 'base_form.html', context=context)
+
+@login_required()
+def add_to_campaign(request, **kwargs):
+    cid = kwargs['character_id']
+    char = Character.objects.get(pk=cid)
+    if(request.user.profile == char.owner):
+        if(request.method == 'POST'):
+            form = forms.AddToCampaignForm(request.POST, user = request.user.profile, cid = cid)
+            if(form.is_valid()):
+                char = form.save()
+                return redirect('/character/%s' % char.id)
+            return redirect('/home')
+        else:
+            form = forms.AddToCampaignForm(user = request.user.profile, cid = cid)
+        context = {
+            'title': 'Add Character to Campaign',
+            'form': form
+        }
+        return render(request, 'base_form.html', context=context)

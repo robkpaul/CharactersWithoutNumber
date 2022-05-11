@@ -122,3 +122,22 @@ class CampaignCreationForm(forms.Form):
             )
             return campaign
         return None
+
+class AddToCampaignForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.owner = kwargs.pop('user')
+        self.char = Character.objects.get(pk=kwargs.pop('cid'))
+        super(AddToCampaignForm, self).__init__(*args, **kwargs)
+        self.fields['campaign'].queryset = self.owner.participant_campaigns
+    
+    campaign = forms.ModelChoiceField(
+        required=True,
+        queryset= Campaign.objects.all()
+    )
+    
+    def save(self, commit=True):
+        if commit:
+            self.char.campaign = Campaign.objects.get(pk=self.data['campaign'])
+            self.char.save()
+            return self.char
+        return None

@@ -11,5 +11,6 @@ urlpatterns = [
     path('campaign/<int:campaign_id>', views.campaign),
     path('character/<int:character_id>', views.character),
     path('create/character', views.create_character),
-    path('create/campaign', views.create_campaign)
+    path('create/campaign', views.create_campaign),
+    path('character/<int:character_id>/add_campaign', views.add_to_campaign)
 ]
