@@ -224,17 +224,17 @@ class Character(models.Model):
         for i in self.inventory.all():
             item = {
                 'type': 'item',
-                'quantity': i.quantity,
                 'equipped': i.equipped,
+                'quantity': i.quantity,
                 'name': i.item.name
             }
             try:
-                a = item.armor
+                a = i.item.armor
                 item['ac'] = a.ac
                 item['type'] = 'armor'
             except Armor.DoesNotExist:
                 try:
-                    w = item.weapon
+                    w = i.item.weapon
                     item['type'] = 'weapon'
                     item['atk'] = w.atk
                 except Weapon.DoesNotExist:
