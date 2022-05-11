@@ -27,7 +27,7 @@ class ChatConsumer(WebsocketConsumer):
         if(text_data_json['message'] != ""):
             message = str(text_data_json['message']).split()
             message = message[0]
-            dice_pattern = re.compile("^\d?\d?d(4|6|8|10|12|20|100)$") # accepts dice rolls that are 4, 6, 8, 10, 12, 20, and 100
+            dice_pattern = re.compile("^([1-9]\d?)?d(4|6|8|10|12|20|100)$") # accepts dice rolls that are 4, 6, 8, 10, 12, 20, and 100
             result = re.match(dice_pattern, str(message))
             if result: 
                 splits = message.split('d')
