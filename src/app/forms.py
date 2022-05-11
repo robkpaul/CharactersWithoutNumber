@@ -1,9 +1,10 @@
+from turtle import title
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User as auth_user
 from django.core.validators import validate_slug, validate_email
 
-from app.models import Background, Character, Profile, Vocation
+from app.models import Background, Campaign, Character, Profile, Vocation
 
 class RegistrationForm(UserCreationForm):
     class Meta:
@@ -25,6 +26,10 @@ class RegistrationForm(UserCreationForm):
         return user
 
 class CharacterCreationForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.owner = kwargs.pop('user')
+        super(CharacterCreationForm, self).__init__(*args, **kwargs)
+
     name = forms.CharField(
         label='Name',
         max_length=64
@@ -101,8 +106,19 @@ class CharacterCreationForm(forms.Form):
             )
             char.save()
             return char
+        return None
+
+class CampaignCreationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.owner = kwargs.pop('user')
-        super(CharacterCreationForm, self).__init__(*args, **kwargs)
+        super(CampaignCreationForm, self).__init__(*args, **kwargs)
+    title = forms.CharField(max_length=64)
 
-        
+    def save(self, commit=True):
+        if commit:
+            campaign = Campaign.objects.create(
+                title = self.data['title'],
+                owner = self.owner
+            )
+            return campaign
+        return None

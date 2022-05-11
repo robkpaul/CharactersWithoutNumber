@@ -10,5 +10,6 @@ urlpatterns = [
     path('home', views.home),
     path('campaign/<int:campaign_id>', views.campaign),
     path('character/<int:character_id>', views.character),
-    path('create/character', views.create_character)
+    path('create/character', views.create_character),
+    path('create/campaign', views.create_campaign)
 ]

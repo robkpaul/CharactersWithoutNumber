@@ -112,3 +112,20 @@ def create_character(request):
         'form': form
     }
     return render(request, 'create_character.html', context=context)
+
+@login_required()
+def create_campaign(request):
+    if(request.method == 'POST'):
+        form = forms.CampaignCreationForm(request.POST, user=request.user.profile)
+        if(form.is_valid()):
+            campaign = form.save()
+            return redirect('/campaign/%s' % campaign.id)
+        return redirect('/home')
+    else:
+        form = forms.CampaignCreationForm(user=request.user.profile)
+    
+    context = {
+        'title': 'Create',
+        'form': form
+    }
+    return render(request, 'create_campaign.html', context=context)
