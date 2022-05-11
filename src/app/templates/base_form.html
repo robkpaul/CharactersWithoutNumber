@@ -8,10 +8,11 @@
 {% block content %}
 <div class="grid-x grid-padding-x">
     <div class="large-4 medium-4 small-12 large-offset-4 medium-offset-4 cell">
-         <form action="/create/campaign" method="post">
+        <p>{{text|safe}}</p>
+         <form action="{{ url }}" method="post">
             {% csrf_token %}
             {{ form }}
-            <input type="submit" class="button expanded" value="Create" />
+            <input type="submit" class="button expanded" value="{{ button|default:'Submit' }}" />
         </form>
     </div>
 </div>
