@@ -2,9 +2,8 @@ from turtle import title
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User as auth_user
-from django.core.validators import validate_slug, validate_email
 
-from app.models import Background, Campaign, Character, Profile, Vocation
+from app.models import Background, Campaign, Character, Focus, InventoryItem, Item, Profile, Spell, Vocation
 
 class RegistrationForm(UserCreationForm):
     class Meta:
@@ -179,4 +178,63 @@ class RemovePlayerFromCampaignForm(forms.Form):
             # TODO: Remove characters from the player being removed
             self.campaign.save()
             return self.campaign
+        return None
+
+class AddItemToCharacterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.char = Character.objects.get(pk=kwargs.pop('cid'))
+        super(AddItemToCharacterForm, self).__init__(*args, **kwargs)
+    
+    item = forms.ModelChoiceField(
+        required=True,
+        queryset= Item.objects.all()
+    )
+    quantity = forms.IntegerField(
+        min_value=1, 
+        required=True
+    )
+    
+    def save(self, commit=True):
+        if commit:
+            InventoryItem.objects.create(
+                owner=self.char,
+                item = Item.objects.get(pk=self.data['item']),
+                quantity = self.data['quantity']
+            )
+            self.char.save()
+            return self.char
+        return None
+
+class AddSpellToCharacterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.char = Character.objects.get(pk=kwargs.pop('cid'))
+        super(AddSpellToCharacterForm, self).__init__(*args, **kwargs)
+    
+    spell = forms.ModelChoiceField(
+        required=True,
+        queryset= Spell.objects.all()
+    )
+    def save(self, commit=True):
+        if commit:
+            self.char.spells.add(Spell.objects.get(pk=self.data['spell']))
+            self.char.save()
+            return self.char
+        return None
+
+class AddFociToCharacterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.char = Character.objects.get(pk=kwargs.pop('cid'))
+        super(AddFociToCharacterForm, self).__init__(*args, **kwargs)
+        #self.fields['foci'].queryset = Focus.objects.filter(character_foci__id__contains=self.char.id)
+    
+    foci = forms.ModelMultipleChoiceField(
+        required=True,
+        queryset=Focus.objects.all()
+    )
+    def save(self, commit=True):
+        if commit:
+            for f in self.data['foci']:
+                self.char.foci.add(Focus.objects.get(pk=f))
+            self.char.save()
+            return self.char
         return None

@@ -188,8 +188,68 @@ def remove_player_from_campaign(request, **kwargs):
         else:
             form = forms.RemovePlayerFromCampaignForm(cid = cid)
         context = {
-            'title': 'Add Player to Campaign',
+            'title': 'Remove Player',
             'form': form
         }
         return render(request, 'base_form.html', context=context)
     return HttpResponse('403: No Access') 
+
+@login_required()
+def add_item_to_character(request, **kwargs):
+    cid = kwargs['character_id']
+    char = Character.objects.get(pk=cid)
+    if(request.user.profile == char.owner):
+        if(request.method == 'POST'):
+            form = forms.AddItemToCharacterForm(request.POST, cid = cid)
+            if(form.is_valid()):
+                char = form.save()
+                return redirect('/character/%s' % char.id)
+            return redirect('/home')
+        else:
+            form = forms.AddItemToCharacterForm(cid = cid)
+        context = {
+            'title': 'Add Item',
+            'form': form
+        }
+        return render(request, 'base_form.html', context=context)
+    return HttpResponse('403: No Access')
+
+@login_required()
+def add_foci_to_character(request, **kwargs):
+    cid = kwargs['character_id']
+    char = Character.objects.get(pk=cid)
+    if(request.user.profile == char.owner):
+        if(request.method == 'POST'):
+            form = forms.AddFociToCharacterForm(request.POST, cid = cid)
+            if(form.is_valid()):
+                char = form.save()
+                return redirect('/character/%s' % char.id)
+            return redirect('/home')
+        else:
+            form = forms.AddFociToCharacterForm(cid = cid)
+        context = {
+            'title': 'Add Foci',
+            'form': form
+        }
+        return render(request, 'base_form.html', context=context)
+    return HttpResponse('403: No Access')
+
+@login_required()
+def add_spell_to_character(request, **kwargs):
+    cid = kwargs['character_id']
+    char = Character.objects.get(pk=cid)
+    if(request.user.profile == char.owner):
+        if(request.method == 'POST'):
+            form = forms.AddSpellToCharacterForm(request.POST, cid = cid)
+            if(form.is_valid()):
+                char = form.save()
+                return redirect('/character/%s' % char.id)
+            return redirect('/home')
+        else:
+            form = forms.AddSpellToCharacterForm(cid = cid)
+        context = {
+            'title': 'Add Spell',
+            'form': form
+        }
+        return render(request, 'base_form.html', context=context)
+    return HttpResponse('403: No Access')

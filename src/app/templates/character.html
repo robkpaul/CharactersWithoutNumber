@@ -10,40 +10,65 @@
     <div class="grid-x grid-padding-x">
         <div id="character-sheet" class="grid-y grid-padding-y large-9 medium-12 cell">
             <h2>{{sheet.name}}</h2>
-            <div class="grid-x grid-padding-x cell">
-                <h4 class="medium-2 cell">{{sheet.vocation}} {{sheet.level}}</h4>
-                <h4 class="medium-2 cell">Max HP: {{sheet.hp}}</h4>
+            <div class="grid-x grid-padding-x small-up-4 cell">
+                <h4 class="cell">{{sheet.vocation}} {{sheet.level}}</h4>
+                <h4 class="cell">Max HP: {{sheet.hp}}</h4>
+                <h4 class="cell">AC: {{sheet.ac}}</h4>
             </div>
             <div class="grid-x grid-padding-x small-up-6 cell">
                 {% for a in sheet.attributes.items %}
-                    <div class="cell"> {{a.0|upper}}: {{a.1}}</div>
+                <div class="cell"> {{a.0|upper}}: {{a.1}}</div>
                 {% endfor %}
             </div>
             <div class="grid-x grid-padding-x cell">
-                <div class="grid-x grid-padding-x small-up-3 medium-6 cell">
-                {% for a in sheet.skills.items %}
-                    <div class="cell"> {{a.0}}: {{a.1}}</div>
-                {% endfor %}
+                <div class="grid-y grid-padding-y medium-2 cell">
+                    <div class="cell">
+                        {% for a in sheet.skills_column_1.items%}
+                        <div>{{a.0}}: {{a.1}}</div>
+                        {% endfor %}
+                    </div>
                 </div>
-                <div class="grid-y medium-6 cell">
+                <div class="grid-y grid-padding-y medium-2 cell">
+                    <div class="cell">
+                        {% for a in sheet.skills_column_2.items %}
+                        <div>{{a.0}}: {{a.1}}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="grid-y grid-padding-y medium-2 cell">
+                    <div class="cell">
+                        {% for a in sheet.skills_column_3.items %}
+                        <div>{{a.0}}: {{a.1}}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="grid-y grid-padding-y medium-6 cell">
                     <h3 class="cell">Foci</h3>
-                    {% for f in sheet.foci %}
-                        <div class="cell">{{f}}</div>
-                    {% endfor %}
+                    <div class="cell">
+                        {% for f in sheet.foci %}
+                        <div>{{f}}</div>
+                        {% endfor %}
+                    </div>
+                    <a href="{{request.path}}/add_foci" class="cell button">Add Foci</a>
                 </div>
-                <div class="grid-y medium-6 cell">
+                <div class="grid-y grid-padding-y medium-6 cell">
                     <h3 class="cell">Inventory</h3>
-                    {% for i in sheet.inventory %}
-                        <div class="cell">{{i.quantity}}x {{i.name}}</div>
-                    {% endfor %}
-                    <a href="{{request.path}}/add_item" class="cell button full">Add Item</a>
+                    <div class="cell">
+                        {% for i in sheet.inventory %}
+                        <div>{{i.quantity}}x {{i.name}}</div>
+                        {% endfor %}
+                    </div>
+                    <a href="{{request.path}}/add_item" class="cell button">Add Item</a>
                 </div>
-                {% if sheet.vocation != 'Warrior' %}
-                <div class="grid-y medium-6 cell">
+                {% if sheet.spells %}
+                <div class="grid-y grid-padding-y medium-6 cell">
                     <h3 class="cell">Spells</h3>
-                    {% for s in sheet.spells %}
-                        <div class="cell">{{s}}</div>
-                    {% endfor %}
+                    <div class="cell">
+                        {% for s in sheet.spells %}
+                        <div>{{s.name}} ({{s.level}})</div>
+                        {% endfor %}
+                    </div>
+                    <a href="{{request.path}}/add_spell" class="cell button">Add Spell</a>
                 </div>
                 {% endif %}
             </div>
@@ -52,9 +77,9 @@
             {% if campaign_id != -1 %}
             <div id="dicelog" class="cell large-6 small-6 grid-y" style="overflow:auto">
             </div>
-            <form class="cell " id="websocket-form">
+            <form class="cell" id="websocket-form">
                 <label for="message">Roll Entry:</label>
-                <input type="text" name="message"/>
+                <input type="text" name="message" />
             </form>
             {% else %}
             <a href="{{request.path}}/add_campaign" class="cell button full" style="margin-top: 10px;">Join Campaign</a>
@@ -66,6 +91,7 @@
 
 {% block scripts %}
 {% if campaign_id != -1 %}
-<script id="roll_script" src="{% static 'js/roll_handler.js' %}" data-room="{{campaign_id}}" data-user="{{username}}"></script>
+<script id="roll_script" src="{% static 'js/roll_handler.js' %}" data-room="{{campaign_id}}"
+    data-user="{{username}}"></script>
 {% endif %}
 {% endblock %}

@@ -182,7 +182,7 @@ class Character(models.Model):
                 'wis': self.atr_wis,
                 'cha': self.atr_cha
             },
-            'skills': {
+            'skills_column_1': {
                 'administer': self.skl_admn,
                 'connect': self.skl_conn,
                 'convince': self.skl_conv,
@@ -190,6 +190,8 @@ class Character(models.Model):
                 'exert': self.skl_exrt,
                 'heal': self.skl_heal,
                 'know': self.skl_know,
+            },
+            'skills_column_2': {
                 'lead': self.skl_know,
                 'magic': self.skl_magc,
                 'notice': self.skl_noti,
@@ -197,6 +199,8 @@ class Character(models.Model):
                 'pray': self.skl_pray,
                 'punch': self.skl_pnch,
                 'ride': self.skl_ride,
+            },
+            'skills_column_3': {
                 'sail': self.skl_sail,
                 'shoot': self.skl_shot,
                 'sneak': self.skl_snek,
@@ -239,7 +243,6 @@ class Character(models.Model):
                     item['atk'] = w.atk
                 except Weapon.DoesNotExist:
                     pass
-            print(item)
             sheet['inventory'].append(item)
         return sheet
 
