@@ -164,7 +164,6 @@ def add_player_to_campaign(request, **kwargs):
             if(form.is_valid()):
                 camp= form.save()
                 return redirect('/campaign/%s' % camp.id)
-            return redirect('/home')
         else:
             form = forms.AddPlayerToCampaignForm(cid = cid)
         context = {

@@ -151,6 +151,11 @@ class AddPlayerToCampaignForm(forms.Form):
         label='Username'
     )
 
+    def clean(self):
+        try:
+            player = Profile.objects.get(username=self.data['username'])
+        except Profile.DoesNotExist:
+            raise forms.ValidationError(u"User does not exist.")
     def save(self, commit=True):
         if commit:
             player = Profile.objects.get(username=self.data['username'])
