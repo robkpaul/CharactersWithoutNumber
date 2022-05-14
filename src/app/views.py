@@ -54,7 +54,6 @@ def home(request):
             'id': c.id,
             'owner': True
         })
-    print(context)
     return render(request, 'home.html', context=context)
 
 @login_required()
