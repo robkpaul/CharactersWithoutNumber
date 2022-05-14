@@ -18,3 +18,11 @@ services:
     image: redis:latest
     expose:
       - 6379
+  nginx:
+    build: ./nginx/
+    ports:
+      - 80:80
+    links:
+      - web:web
+    depends_on:
+      - web
