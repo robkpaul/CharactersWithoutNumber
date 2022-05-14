@@ -60,7 +60,7 @@
                     </div>
                     <a href="{{request.path}}/add_item" class="cell button">Add Item</a>
                 </div>
-                {% if sheet.spells %}
+                {% if sheet.vocation == 'Mage' or sheet.vocation == 'Adventurer' %}
                 <div class="grid-y grid-padding-y medium-6 cell">
                     <h3 class="cell">Spells</h3>
                     <div class="cell">
